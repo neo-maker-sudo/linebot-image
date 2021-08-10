@@ -122,7 +122,7 @@ def handle_image(event):
     random_hex = secrets.token_hex(8)
     filename = random_hex + ".png"
     
-    file_path = os.path.join(current_app.root_path, "static", filename)
+    file_path = './static/'+ filename
     with open(file_path, 'wb') as fd:
         for chunk in message_content.iter_content():
             fd.write(chunk)
