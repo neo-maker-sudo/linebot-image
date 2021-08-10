@@ -118,16 +118,15 @@ def handle_unfollow(event):
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image(event):
     message_content = line_bot_api.get_message_content(event.message.id)
-
+    
     random_hex = secrets.token_hex(8)
     filename = random_hex + ".png"
     
-    file_path = './static/'+ filename
-    with open(file_path, 'wb') as fd:
+    with open(filename, 'wb') as fd:
         for chunk in message_content.iter_content():
             fd.write(chunk)
 
-    s3.upload_file(Bucket=bucket, Filename=file_path, Key=filename)
+    s3.upload_file(Bucket=bucket, Filename=filename, Key=filename)
 
     user = User.query.filter_by(user_id=event.source.user_id).first()
 
