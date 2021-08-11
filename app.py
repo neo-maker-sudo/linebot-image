@@ -44,10 +44,13 @@ class Photo(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"))
     author = db.relationship("User", back_populates="photos")
 
+# compare request is from line offical and authenticate access token and secret
 @app.route("/callback", methods=['POST'])
 def callback():
+    # get X-LINE-Signature header value (signature authentication)
     signature = request.headers['X-Line-Signature']
 
+    # get requset body as text 
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
@@ -174,6 +177,7 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text=event.message.text
         ))
+
 
 if __name__ == '__main__':
     # db.create_all()

@@ -9,8 +9,9 @@ line-bot-sdk = "*"
 python-dotenv = "*"
 flask-sqlalchemy = "*"
 boto3 = "*"
-pymysql = "*"
 gunicorn = "*"
+apscheduler = "*"
+requests = "*"
 
 [dev-packages]
 
