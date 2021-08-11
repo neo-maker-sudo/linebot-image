@@ -2,7 +2,7 @@ import os
 import secrets
 import time
 import boto3
-from flask import Flask, request, abort, current_app
+from flask import Flask, request, abort
 from flask_sqlalchemy import SQLAlchemy
 from linebot import (
     LineBotApi, WebhookHandler
