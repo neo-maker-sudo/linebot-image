@@ -116,8 +116,14 @@ def handle_audio(event):
 @handler.add(UnfollowEvent)
 def handle_unfollow(event):
     user = User.query.filter_by(user_id=event.source.user_id).first()
-    db.session.delete(user)
-    db.session.commit()
+    if user is None:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(Text="Thank you for your time")
+        )
+    else:
+        db.session.delete(user)
+        db.session.commit()
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image(event):
@@ -134,19 +140,24 @@ def handle_image(event):
 
     user = User.query.filter_by(user_id=event.source.user_id).first()
 
-    photo = Photo(
-        name="https://d13rqy4yzh3fb6.cloudfront.net/" + filename,
-        author=user
-    )
+    if user is None:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(Text="Server has error issue, please refollow linebot.")
+        )
+    else:
+        photo = Photo(
+            name="https://d13rqy4yzh3fb6.cloudfront.net/" + filename,
+            author=user
+        )
 
-    db.session.add(photo)
-    
-    db.session.commit()
+        db.session.add(photo)
+        db.session.commit()
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text="Thank you for your image upload, already save your personal data"
-    ))
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="Thank you for your image upload, already save your personal data"
+        ))
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
