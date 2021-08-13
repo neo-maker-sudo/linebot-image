@@ -12,6 +12,7 @@ boto3 = "*"
 gunicorn = "*"
 apscheduler = "*"
 requests = "*"
+pymysql = "*"
 
 [dev-packages]
 

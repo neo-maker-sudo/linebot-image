@@ -16,10 +16,10 @@ from linebot.models import (
     FollowEvent, UnfollowEvent, AudioMessage
 )
 
-
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://neo:{os.environ.get('MYSQL_PASS')}@{os.environ.get('MYSQL_SERVER')}:3306/linebot"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
@@ -40,9 +40,10 @@ class User(db.Model):
 
 class Photo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"))
+    name = db.Column(db.String(255), nullable=False)
+    authorId = db.Column(db.String(100), db.ForeignKey("user.user_id"))
     author = db.relationship("User", back_populates="photos")
+
 
 # compare request is from line offical and authenticate access token and secret
 @app.route("/callback", methods=['POST'])
@@ -150,7 +151,7 @@ def handle_image(event):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     if event.message.text == "回傳":
-        photo = Photo.query.filter_by(user_id=event.source.user_id).order_by(Photo.id.desc()).first()
+        photo = Photo.query.filter_by(authorId=event.source.user_id).order_by(Photo.id.desc()).first()
         if photo == None:
             line_bot_api.reply_message(
                 event.reply_token,
